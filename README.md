@@ -1,1 +1,1 @@
-home page for church website
+Personal website on <https://benjaminjanderson.com/>
