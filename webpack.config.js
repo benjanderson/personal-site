@@ -112,12 +112,16 @@ module.exports = {
 		new CopyWebpackPlugin({
 			patterns: [
 				{
-					from: path.resolve(environment.paths.source, 'images', 'content'),
-					to: path.resolve(environment.paths.output, 'images', 'content'),
+					from: path.resolve(environment.paths.source, 'images'),
+					to: path.resolve(environment.paths.output, 'images'),
 					toType: 'dir',
 					globOptions: {
 						ignore: ['*.DS_Store', 'Thumbs.db']
 					}
+				},
+        {
+					from: path.resolve(environment.paths.source, 'Ben Anderson Resume.pdf'),
+					to: path.resolve(environment.paths.output, 'Ben Anderson Resume.pdf')
 				}
 			]
 		})
