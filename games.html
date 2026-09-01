@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A collection of small browser games by Benjamin J Anderson."
+    />
+    <title>Games | Benjamin J Anderson</title>
+  </head>
+  <body class="catalog-page">
+    <header class="catalog-header">
+      <a class="back-link" href="index.html" aria-label="Back to home">&larr; Home</a>
+      <p class="eyebrow">Local arcade</p>
+      <h1>Games</h1>
+      <p class="catalog-intro">Small experiments, built for the browser.</p>
+    </header>
+
+    <main class="game-grid" aria-label="Available games">
+      <a class="game-card game-card--available" href="bomb-dodger.html">
+        <div class="bomb-preview" aria-hidden="true">
+          <span class="bomb-preview__spark"></span>
+          <span class="bomb-preview__bomb"></span>
+          <span class="bomb-preview__runner"></span>
+        </div>
+        <div class="game-card__body">
+          <span class="status status--ready">Ready to play</span>
+          <h2>Bomb Dodger</h2>
+          <p>Keep moving. Stay out of the blast zone.</p>
+        </div>
+      </a>
+
+      <article class="game-card game-card--empty">
+        <img src="https://placehold.co/800x450/20201f/aaa49b?text=Game+02" alt="Placeholder for game 2" />
+        <div class="game-card__body">
+          <span class="status">Empty slot</span>
+          <h2>Coming soon</h2>
+        </div>
+      </article>
+      <article class="game-card game-card--empty">
+        <img src="https://placehold.co/800x450/20201f/aaa49b?text=Game+03" alt="Placeholder for game 3" />
+        <div class="game-card__body">
+          <span class="status">Empty slot</span>
+          <h2>Coming soon</h2>
+        </div>
+      </article>
+      <article class="game-card game-card--empty">
+        <img src="https://placehold.co/800x450/20201f/aaa49b?text=Game+04" alt="Placeholder for game 4" />
+        <div class="game-card__body">
+          <span class="status">Empty slot</span>
+          <h2>Coming soon</h2>
+        </div>
+      </article>
+      <article class="game-card game-card--empty">
+        <img src="https://placehold.co/800x450/20201f/aaa49b?text=Game+05" alt="Placeholder for game 5" />
+        <div class="game-card__body">
+          <span class="status">Empty slot</span>
+          <h2>Coming soon</h2>
+        </div>
+      </article>
+    </main>
+
+    <script type="module" src="/src/games.ts"></script>
+  </body>
+</html>
