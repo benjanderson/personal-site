@@ -250,7 +250,9 @@ h2 {
 
 #game {
   display: flex;
+  flex: 1;
   align-items: center;
+  justify-content: center;
   min-height: 0;
 }
 
