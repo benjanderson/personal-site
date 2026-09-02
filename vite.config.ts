@@ -1,5 +1,8 @@
-import { resolve } from 'path'
+import { dirname, resolve } from 'path'
+import { fileURLToPath } from 'url'
 import { defineConfig } from 'vite'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
   build: {
@@ -7,7 +10,7 @@ export default defineConfig({
       input: {
         home: resolve(__dirname, 'index.html'),
         games: resolve(__dirname, 'games/index.html'),
-        bombDodger: resolve(__dirname, 'bomb-dodger/index.html'),
+        bombDodger: resolve(__dirname, 'games/bomb-dodger.html'),
       },
     },
   },
