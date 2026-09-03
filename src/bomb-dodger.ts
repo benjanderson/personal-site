@@ -21,7 +21,6 @@ class BombDodgerScene extends Phaser.Scene {
   private scoreText?: Phaser.GameObjects.Text
   private livesText?: Phaser.GameObjects.Text
   private messageText?: Phaser.GameObjects.Text
-  private tiltPrompt?: Phaser.GameObjects.Text
   private tilt = 0
   private tiltBaseline?: number
   private tiltEnabled = false
@@ -65,8 +64,7 @@ class BombDodgerScene extends Phaser.Scene {
       }) as Record<'left' | 'right', Phaser.Input.Keyboard.Key>
     }
 
-    this.setupTiltControls()
-    this.startRound()
+    this.showStartScreen()
   }
 
   update(time: number): void {
@@ -199,7 +197,49 @@ class BombDodgerScene extends Phaser.Scene {
     this.startRound()
   }
 
-  private setupTiltControls(): void {
+  private showStartScreen(): void {
+    const overlay = this.add.container(0, 0).setDepth(20)
+    const shade = this.add.rectangle(
+      GAME_WIDTH / 2,
+      GAME_HEIGHT / 2,
+      GAME_WIDTH,
+      GAME_HEIGHT,
+      0x171716,
+      0.82,
+    )
+    const title = this.add
+      .text(GAME_WIDTH / 2, 190, 'BOMB DODGER', {
+        color: '#f4efe6',
+        fontFamily: 'Archivo Black, sans-serif',
+        fontSize: '42px',
+      })
+      .setOrigin(0.5)
+    const instructions = this.add
+      .text(GAME_WIDTH / 2, 246, 'STEER THE BOMB. PREDICT THE TARGET.', this.hudStyle())
+      .setOrigin(0.5)
+    const startButton = this.add
+      .rectangle(GAME_WIDTH / 2, 320, 190, 58, 0xf5c44d)
+      .setStrokeStyle(2, 0xf4efe6)
+      .setInteractive({ useHandCursor: true })
+    const startLabel = this.add
+      .text(GAME_WIDTH / 2, 320, 'START', {
+        color: '#171716',
+        fontFamily: 'Archivo Black, sans-serif',
+        fontSize: '23px',
+      })
+      .setOrigin(0.5)
+
+    overlay.add([shade, title, instructions, startButton, startLabel])
+    startButton.once('pointerdown', async () => {
+      startButton.disableInteractive()
+      await this.requestTiltPermission()
+      overlay.destroy(true)
+      this.startRound()
+    })
+
+  }
+
+  private async requestTiltPermission(): Promise<void> {
     if (!('DeviceOrientationEvent' in window) || navigator.maxTouchPoints === 0) return
 
     const orientationEvent = DeviceOrientationEvent as DeviceOrientationPermission
@@ -208,19 +248,12 @@ class BombDodgerScene extends Phaser.Scene {
       return
     }
 
-    this.tiltPrompt = this.add
-      .text(GAME_WIDTH / 2, 24, 'TAP TO ENABLE TILT', this.hudStyle())
-      .setOrigin(0.5, 0)
-      .setDepth(10)
-
-    this.input.once('pointerdown', async () => {
-      try {
-        if (await orientationEvent.requestPermission?.() === 'granted') this.enableTilt()
-      } finally {
-        this.tiltPrompt?.destroy()
-        this.tiltPrompt = undefined
-      }
-    })
+    try {
+      const permission = orientationEvent.requestPermission()
+      if (await permission === 'granted') this.enableTilt()
+    } catch {
+      // Keyboard controls remain available when motion permission is unavailable.
+    }
   }
 
   private enableTilt(): void {
