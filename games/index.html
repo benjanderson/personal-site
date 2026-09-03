@@ -9,7 +9,7 @@
     />
     <title>Games | Benjamin J Anderson</title>
     <script type="module" crossorigin src="/assets/modulepreload-polyfill.c7c6310f.js"></script>
-    <link rel="stylesheet" href="/assets/games.dfbefc9d.css">
+    <link rel="stylesheet" href="/assets/games.28402763.css">
   </head>
   <body class="catalog-page">
     <header class="catalog-header">
@@ -22,6 +22,10 @@
     <main class="game-grid" aria-label="Available games">
       <a class="game-card game-card--available" href="../games/bomb-dodger.html">
         <div class="bomb-preview" aria-hidden="true">
+          <span class="bomb-preview__hud">
+            <span>Hits&nbsp; 0</span>
+            <span>Bombs&nbsp; 3</span>
+          </span>
           <span class="bomb-preview__spark"></span>
           <span class="bomb-preview__bomb"></span>
           <span class="bomb-preview__runner"></span>
@@ -29,17 +33,38 @@
         <div class="game-card__body">
           <span class="status status--ready">Ready to play</span>
           <h2>Bomb Dodger</h2>
-          <p>Keep moving. Stay out of the blast zone.</p>
+          <p>You are the bomb, hit the runner.</p>
         </div>
       </a>
 
-      <article class="game-card game-card--empty">
-        <img src="https://placehold.co/800x450/20201f/aaa49b?text=Game+02" alt="Placeholder for game 2" />
-        <div class="game-card__body">
-          <span class="status">Empty slot</span>
-          <h2>Coming soon</h2>
+      <a
+        class="game-card game-card--available"
+        href="https://battletanks.benjaminjanderson.com/"
+        target="_blank"
+        rel="noopener"
+      >
+        <div class="battle-preview" aria-hidden="true">
+          <div class="battle-preview__editor">
+            <span class="battle-preview__label">Battle Tanks</span>
+            <strong>Alpha</strong>
+            <span class="battle-preview__block battle-preview__block--event">repeat while running</span>
+            <span class="battle-preview__block">move forward 100 units</span>
+            <span class="battle-preview__block">turn turret right 90&deg;</span>
+            <span class="battle-preview__block battle-preview__block--event">when aimed at enemy</span>
+            <span class="battle-preview__block">shoot</span>
+          </div>
+          <div class="battle-preview__arena">
+            <span class="battle-preview__arena-label">Live arena</span>
+            <span class="battle-preview__tank battle-preview__tank--alpha"></span>
+            <span class="battle-preview__tank battle-preview__tank--bravo"></span>
+          </div>
         </div>
-      </article>
+        <div class="game-card__body">
+          <span class="status status--ready">Game 02 &middot; External</span>
+          <h2>Battle Tanks</h2>
+          <p>Program your tank, then send it into battle.</p>
+        </div>
+      </a>
       <article class="game-card game-card--empty">
         <img src="https://placehold.co/800x450/20201f/aaa49b?text=Game+03" alt="Placeholder for game 3" />
         <div class="game-card__body">
