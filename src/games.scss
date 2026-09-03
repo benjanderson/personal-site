@@ -122,71 +122,85 @@ h2 {
 .bomb-preview {
   position: relative;
   overflow: hidden;
-  background-color: #e9dfcf;
-  background-image: repeating-linear-gradient(
-    135deg,
-    transparent 0 34px,
-    rgba(17, 17, 16, 0.08) 34px 36px
-  );
+  background-color: #171716;
+  background-image:
+    linear-gradient(rgba(52, 52, 48, 0.45) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(52, 52, 48, 0.45) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.bomb-preview__hud {
+  position: absolute;
+  z-index: 2;
+  top: 7%;
+  right: 4%;
+  left: 4%;
+  display: flex;
+  justify-content: space-between;
+  color: #aaa49b;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.bomb-preview::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 10%;
+  border-top: 3px solid #f5c44d;
+  background: #20201f;
+  content: "";
 }
 
 .bomb-preview__bomb {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 25%;
+  z-index: 1;
+  top: 28%;
+  left: 42%;
+  width: clamp(22px, 5%, 38px);
   aspect-ratio: 1;
+  border: 3px solid #f4efe6;
   border-radius: 50%;
-  background: #20201f;
-  transform: translate(-50%, -42%);
-  box-shadow: 16px 18px 0 rgba(17, 17, 16, 0.12);
+  background: #2a2a28;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
 }
 
 .bomb-preview__bomb::before {
   position: absolute;
-  top: -18%;
-  left: 53%;
-  width: 32%;
-  height: 25%;
-  border-top: 8px solid #20201f;
-  border-right: 8px solid #20201f;
+  top: -8px;
+  left: 68%;
+  width: 9px;
+  height: 9px;
+  border-top: 3px solid #f4efe6;
   content: "";
-  transform: rotate(-22deg);
+  transform: rotate(28deg);
 }
 
 .bomb-preview__spark {
   position: absolute;
-  z-index: 1;
-  top: 25%;
-  left: 64%;
-  width: 28px;
-  height: 28px;
+  z-index: 2;
+  top: calc(28% - 13px);
+  left: calc(42% + 8px);
+  width: 7px;
+  height: 7px;
   background: #f5c44d;
-  clip-path: polygon(
-    50% 0,
-    61% 36%,
-    100% 20%,
-    72% 50%,
-    100% 80%,
-    61% 64%,
-    50% 100%,
-    39% 64%,
-    0 80%,
-    28% 50%,
-    0 20%,
-    39% 36%
-  );
+  transform: rotate(45deg);
+  box-shadow: 0 0 8px #f5c44d;
 }
 
 .bomb-preview__runner {
   position: absolute;
-  right: 14%;
-  bottom: 12%;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+  z-index: 1;
+  right: 18%;
+  bottom: 10%;
+  width: clamp(28px, 7%, 46px);
+  aspect-ratio: 44 / 30;
   background: #e9573f;
-  box-shadow: -12px 25px 0 3px #e9573f;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  filter: drop-shadow(0 7px 7px rgba(0, 0, 0, 0.35));
 }
 
 .game-card__body {
