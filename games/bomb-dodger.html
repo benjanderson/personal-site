@@ -15,7 +15,14 @@
       </div>
       <p class="controls">Steer with &larr; &rarr;, A D, or tilt</p>
     </header>
-    <main id="game" aria-label="Bomb Dodger game canvas"></main>
+    <main id="game" aria-label="Bomb Dodger game canvas">
+      <div class="game-start" id="game-start">
+        <p class="game-start__title">Bomb Dodger</p>
+        <p class="game-start__instructions">Steer the bomb. Predict the target.</p>
+        <button class="game-start__button" id="game-start-button" type="button">Start</button>
+        <p class="game-start__status" id="game-start-status" aria-live="polite"></p>
+      </div>
+    </main>
 
     <script type="module" src="/src/bomb-dodger.ts"></script>
   </body>

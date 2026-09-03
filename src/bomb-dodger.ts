@@ -13,6 +13,8 @@ type DeviceOrientationPermission = typeof DeviceOrientationEvent & {
   requestPermission?: () => Promise<'granted' | 'denied'>
 }
 
+let tiltPermissionGranted = false
+
 class BombDodgerScene extends Phaser.Scene {
   private bomb?: Phaser.GameObjects.Arc
   private target?: Phaser.GameObjects.Triangle
@@ -21,6 +23,7 @@ class BombDodgerScene extends Phaser.Scene {
   private scoreText?: Phaser.GameObjects.Text
   private livesText?: Phaser.GameObjects.Text
   private messageText?: Phaser.GameObjects.Text
+  private tiltStatusText?: Phaser.GameObjects.Text
   private tilt = 0
   private tiltBaseline?: number
   private tiltEnabled = false
@@ -64,7 +67,8 @@ class BombDodgerScene extends Phaser.Scene {
       }) as Record<'left' | 'right', Phaser.Input.Keyboard.Key>
     }
 
-    this.showStartScreen()
+    if (tiltPermissionGranted) this.enableTilt()
+    this.startRound()
   }
 
   update(time: number): void {
@@ -197,76 +201,23 @@ class BombDodgerScene extends Phaser.Scene {
     this.startRound()
   }
 
-  private showStartScreen(): void {
-    const overlay = this.add.container(0, 0).setDepth(20)
-    const shade = this.add.rectangle(
-      GAME_WIDTH / 2,
-      GAME_HEIGHT / 2,
-      GAME_WIDTH,
-      GAME_HEIGHT,
-      0x171716,
-      0.82,
-    )
-    const title = this.add
-      .text(GAME_WIDTH / 2, 190, 'BOMB DODGER', {
-        color: '#f4efe6',
-        fontFamily: 'Archivo Black, sans-serif',
-        fontSize: '42px',
-      })
-      .setOrigin(0.5)
-    const instructions = this.add
-      .text(GAME_WIDTH / 2, 246, 'STEER THE BOMB. PREDICT THE TARGET.', this.hudStyle())
-      .setOrigin(0.5)
-    const startButton = this.add
-      .rectangle(GAME_WIDTH / 2, 320, 190, 58, 0xf5c44d)
-      .setStrokeStyle(2, 0xf4efe6)
-      .setInteractive({ useHandCursor: true })
-    const startLabel = this.add
-      .text(GAME_WIDTH / 2, 320, 'START', {
-        color: '#171716',
-        fontFamily: 'Archivo Black, sans-serif',
-        fontSize: '23px',
-      })
-      .setOrigin(0.5)
-
-    overlay.add([shade, title, instructions, startButton, startLabel])
-    startButton.once('pointerdown', async () => {
-      startButton.disableInteractive()
-      await this.requestTiltPermission()
-      overlay.destroy(true)
-      this.startRound()
-    })
-
-  }
-
-  private async requestTiltPermission(): Promise<void> {
-    if (!('DeviceOrientationEvent' in window) || navigator.maxTouchPoints === 0) return
-
-    const orientationEvent = DeviceOrientationEvent as DeviceOrientationPermission
-    if (!orientationEvent.requestPermission) {
-      this.enableTilt()
-      return
-    }
-
-    try {
-      const permission = orientationEvent.requestPermission()
-      if (await permission === 'granted') this.enableTilt()
-    } catch {
-      // Keyboard controls remain available when motion permission is unavailable.
-    }
-  }
-
   private enableTilt(): void {
     if (this.tiltEnabled) return
     this.tiltEnabled = true
+    this.tiltStatusText = this.add
+      .text(GAME_WIDTH / 2, 20, 'TILT READY', this.hudStyle())
+      .setOrigin(0.5, 0)
     window.addEventListener('deviceorientation', this.handleOrientation)
+    window.addEventListener('orientationchange', this.resetTiltCalibration)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       window.removeEventListener('deviceorientation', this.handleOrientation)
+      window.removeEventListener('orientationchange', this.resetTiltCalibration)
     })
   }
 
   private handleOrientation = (event: DeviceOrientationEvent): void => {
-    const angle = screen.orientation?.angle ?? 0
+    const legacyAngle = (window as Window & { orientation?: number }).orientation
+    const angle = ((screen.orientation?.angle ?? legacyAngle ?? 0) + 360) % 360
     const reading = angle === 90
       ? event.beta
       : angle === 270
@@ -276,6 +227,13 @@ class BombDodgerScene extends Phaser.Scene {
     if (reading === null) return
     this.tiltBaseline ??= reading
     this.tilt = reading - this.tiltBaseline
+    this.tiltStatusText?.setText('TILT ACTIVE').setColor('#f5c44d')
+  }
+
+  private resetTiltCalibration = (): void => {
+    this.tilt = 0
+    this.tiltBaseline = undefined
+    this.tiltStatusText?.setText('TILT READY').setColor('#aaa49b')
   }
 
   private hudStyle(): Phaser.Types.GameObjects.Text.TextStyle {
@@ -288,15 +246,61 @@ class BombDodgerScene extends Phaser.Scene {
   }
 }
 
-new Phaser.Game({
-  type: Phaser.AUTO,
-  parent: 'game',
-  backgroundColor: '#171716',
-  scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
-    width: GAME_WIDTH,
-    height: GAME_HEIGHT,
-  },
-  scene: BombDodgerScene,
+const startScreen = document.querySelector<HTMLElement>('#game-start')
+const startButton = document.querySelector<HTMLButtonElement>('#game-start-button')
+const startStatus = document.querySelector<HTMLElement>('#game-start-status')
+
+const launchGame = (): void => {
+  startScreen?.remove()
+  new Phaser.Game({
+    type: Phaser.AUTO,
+    parent: 'game',
+    backgroundColor: '#171716',
+    scale: {
+      mode: Phaser.Scale.FIT,
+      autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
+      width: GAME_WIDTH,
+      height: GAME_HEIGHT,
+    },
+    scene: BombDodgerScene,
+  })
+}
+
+startButton?.addEventListener('click', async () => {
+  if (startButton.dataset.fallback === 'true' || navigator.maxTouchPoints === 0) {
+    launchGame()
+    return
+  }
+
+  startButton.disabled = true
+  if (startStatus) startStatus.textContent = 'Requesting motion access...'
+
+  let failureMessage = ''
+  if (!window.isSecureContext) {
+    failureMessage = 'Tilt requires HTTPS on iOS. Open this page from a secure URL.'
+  } else if (!('DeviceOrientationEvent' in window)) {
+    failureMessage = 'This browser does not provide device orientation.'
+  } else {
+    const orientationEvent = window.DeviceOrientationEvent as DeviceOrientationPermission
+    try {
+      tiltPermissionGranted = orientationEvent.requestPermission
+        ? await orientationEvent.requestPermission() === 'granted'
+        : true
+      if (!tiltPermissionGranted) failureMessage = 'Motion access was denied in Safari.'
+    } catch (error) {
+      failureMessage = error instanceof Error
+        ? `Motion access failed: ${error.message}`
+        : 'Motion access failed in Safari.'
+    }
+  }
+
+  if (tiltPermissionGranted) {
+    launchGame()
+    return
+  }
+
+  if (startStatus) startStatus.textContent = `${failureMessage} You can continue without tilt.`
+  startButton.textContent = 'Play without tilt'
+  startButton.dataset.fallback = 'true'
+  startButton.disabled = false
 })
