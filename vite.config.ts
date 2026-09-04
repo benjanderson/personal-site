@@ -10,6 +10,7 @@ export default defineConfig({
       input: {
         home: resolve(__dirname, 'index.html'),
         games: resolve(__dirname, 'games/index.html'),
+        gemTd: resolve(__dirname, 'games/gem-td.html'),
         bombDodger: resolve(__dirname, 'games/bomb-dodger.html'),
       },
     },
