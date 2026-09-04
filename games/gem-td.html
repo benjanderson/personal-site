@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Play Gem TD, a chance-driven tower defense maze game, in your browser."
+    />
+    <title>Gem TD | Benjamin J Anderson</title>
+    <script type="module" crossorigin src="/assets/gemTd.f3854ddb.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill.c7c6310f.js">
+    <link rel="modulepreload" crossorigin href="/assets/phaser.esm.65832920.js">
+    <link rel="stylesheet" href="/assets/games.5940268c.css">
+  </head>
+  <body class="game-page gem-td-page">
+    <header class="game-toolbar">
+      <a class="back-link" href="../games/" aria-label="Back to games">&larr; Games</a>
+      <div>
+        <p class="eyebrow">Strategy experiment 03</p>
+        <h1>Gem TD</h1>
+      </div>
+      <p class="controls">Drag to pan &middot; Scroll or pinch to zoom &middot; Tap to place</p>
+    </header>
+    <main id="game" aria-label="Gem TD game canvas">
+      <div class="game-start" id="game-start">
+        <p class="game-start__title">Gem TD</p>
+        <p class="game-start__instructions">Place five. Keep one. Build the longest path.</p>
+        <button class="game-start__button" id="game-start-button" type="button">Start run</button>
+        <p class="game-start__status" id="game-start-status" aria-live="polite"></p>
+      </div>
+      <div class="gem-td-orientation" aria-hidden="true">
+        <strong>Rotate to play</strong>
+        <span>Gem TD needs a landscape board.</span>
+      </div>
+      <p class="visually-hidden" id="game-announcer" aria-live="polite"></p>
+    </main>
+
+    
+  </body>
+</html>
